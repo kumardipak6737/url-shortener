@@ -11,7 +11,8 @@ module.exports.handlegenerateUrl = async (req, res )=>{
     const url = await urlModel.create({
         ShortId:ShortId,
         redirectUrl:body.url,
-        visitHistory:[]
+        visitHistory:[],
+        createdBy:req.user._id
     });
     const urls = await urlModel.find({});
     return res.render("Home",{

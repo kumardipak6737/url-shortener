@@ -7,11 +7,15 @@ const connectDB = require('./db/db.js')
 const path = require('path')
 const url = require('./model/url.js')
 const staticRouter = require('./routes/staticRouter.js')
+const userRouter = require('./routes/user.js')
+const cookieparser = require('cookie-parser')
+const middleware = require('./middleware/auth.js')
 
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
+app.use(cookieparser())
 
 connectDB();
 
@@ -31,7 +35,13 @@ app.get("/", async (req, res) => {
 
 
 
-app.use('/url', urlRoute);
-app.use('/',staticRouter);
+app.use('/url',
+    middleware.restrictToLoggedInUserOnly,
+    urlRoute);
+app.use('/user', userRouter);
+app.use('/',
+    middleware.checkauth,
+    staticRouter);
+
 
 module.exports = app;
